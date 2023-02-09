@@ -1,23 +1,23 @@
 import {LitElement, html} from 'lit';
+import {map} from 'lit/directives/map.js';
 import {customElement, property} from 'lit/decorators.js';
 
 @customElement('my-element')
 export class MyElement extends LitElement {
   @property()
-  result = '';
+  groceries = ['tea', 'milk', 'honey', 'chocolate'];
 
-  flipCoin() {
-    if (Math.random() < 0.5) {
-      this.result = 'Heads';
-    } else {
-      this.result = 'Tails';
-    }
+  removeItem(item: string) {
+    const indexToRemove = this.groceries.indexOf(item);
+    this.groceries =
+        this.groceries.filter((_, i) => i !== indexToRemove);
   }
 
   render() {
     return html`
-      <button @click=${this.flipCoin}>Flip a coin!</button>
-      <p>Result: ${this.result}</p>
+      ${map(this.groceries, (item) =>
+        html`<button @click=${() => this.removeItem(item)}>x</button> ${item}<br>`
+      )}
     `;
   }
 }
