@@ -1,55 +1,49 @@
-import {html, css, LitElement} from 'lit';
-import {customElement} from 'lit/decorators.js';
-// TODO: Import directives
-import {range} from 'lit/directives/range.js';
-import {map} from 'lit/directives/map.js';
-
+import {LitElement, html} from 'lit';
+import {customElement, state} from 'lit/decorators.js';
+import {map} from 'lit/directives/map.js'
+// TODO: import repeat directive.
+import {repeat} from 'lit/directives/repeat.js';
+    
 @customElement('my-element')
 class MyElement extends LitElement {
-  static styles = css`
-    /* playground-fold */
-    :host {
-      display: block;
-      width: 400px;
-      height: 400px;
-    }
-    #board {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      grid-template-rows: repeat(8, 1fr);
-      border: 2px solid #404040;
-      box-sizing: border-box;
-      height: 100%;
-    }
-    #board > div {
-      padding: 2px;
-    }
-    .black {
-      color: #ddd;
-      background: black;
-    }
-    .white {
-      color: gray;
-      background: white;
-    }
-    /* playground-fold-end */
-
-  `;
+  @state()
+  tasks = [
+    { id: 'a', label: 'Learn Lit'},
+    { id: 'b', label: 'Feed the cat'},
+    { id: 'c', label: 'Go for a walk'},
+    { id: 'd', label: 'Take a nap'},
+  ]
 
   render() {
     return html`
-      <p>Let's play a game!</p>
-      <div id="board">
-        <!-- TODO: Place squares here. -->
-        ${map(range(8), (row) => map(range(8), (col) => html`
-          <div class="${getColor(row, col)}">${getLabel(row, col)}</div>
-        `))}
-      </div>
+      <p>Things to do today:</p>
+      <button @click=${() => this._sort(1)}>Sort ascending</button>
+      <button @click=${() => this._sort(-1)}>Sort descending</button>
+      <ul>
+        <!-- TODO: Replace below using repeat directive. -->
+        ${repeat(
+          this.tasks,
+          (task) => task.id,
+          (task) => html`
+            <li>
+              <label><input type="checkbox" />${task.label} (${task.id})</label>
+            </li>
+          `
+        )}
+        ${map(
+          this.tasks,
+          (task) => html`
+            <li>
+              <label><input type="checkbox" />${task.id}) ${task.label}</label>
+            </li>
+          `
+        )}
+      </ul>
     `;
   }
-}
 
-const getColor = (row: number, col: number) =>
-  (row + col) % 2 ? 'white' : 'black';
-const getLabel = (row: number, col: number) =>
-  `${String.fromCharCode(65 + col)}${8 - row}`;
+  private _sort(dir: number) {
+    this.tasks.sort((a, b) => a.label.localeCompare(b.label) * dir);
+    this.requestUpdate();
+  }
+}
