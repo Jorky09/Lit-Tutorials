@@ -1,17 +1,19 @@
 import {LitElement, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
-import {map} from 'lit/directives/map.js';
-// TODO: import map directive.
 
 @customElement('my-element')
 class MyElement extends LitElement {
   @state()
-  items = new Set(['Apple', 'Banana', 'Grape', 'Orange', 'Lime'])
+  names = ['Chandler', 'Phoebe', 'Joey', 'Monica', 'Rachel', 'Ross'];
 
   render() {
     return html`
+      <p>A list of names that include the letter "e"</p>
       <ul>
-        ${map(this.items, (item) => html`<li>${item}</li>`)}
+        <!-- TODO: Render list items of filtered names. -->
+        ${this.names
+        .filter((name) => name.match(/e/i))
+        .map((name) => html`<li>${name}</li>`)}
       </ul>
     `;
   }
